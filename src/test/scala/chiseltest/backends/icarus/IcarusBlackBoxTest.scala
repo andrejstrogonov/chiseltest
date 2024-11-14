@@ -6,18 +6,19 @@ import chisel3._
 import chisel3.util._
 import chiseltest._
 import chiseltest.simulator.{PlusArgsAnnotation, RequiresIcarus}
+import org.scalatest.Assertions.===
 import org.scalatest.flatspec.AnyFlatSpec
 
 import scala.util.Random
 
 class BlackBoxAdderIO extends Bundle {
-  val a = Input(UInt(8.W))
-  val b = Input(UInt(8.W))
-  val q = Output(UInt(8.W))
+  val a: UInt = Input(UInt(8.W))
+  val b: UInt = Input(UInt(8.W))
+  val q: UInt = Output(UInt(8.W))
 }
 
 class BlackBoxAdder extends BlackBox with HasBlackBoxInline {
-  val io = IO(new BlackBoxAdderIO).suggestName("io")
+  val io: BlackBoxAdderIO = IO(new BlackBoxAdderIO).suggestName("io")
   setInline(
     "BlackBoxAdder.v",
     """module BlackBoxAdder(a, b, q);
@@ -30,15 +31,15 @@ class BlackBoxAdder extends BlackBox with HasBlackBoxInline {
 }
 
 class BlackBoxAdderWrapper extends Module {
-  val io = IO(new BlackBoxAdderIO)
-  val m = Module(new BlackBoxAdder)
+  val io: BlackBoxAdderIO = IO(new BlackBoxAdderIO)
+  val m: BlackBoxAdder = Module(new BlackBoxAdder)
   m.io <> io
 }
 
 // Inspired by plusarg_reader in rocket-chip
 class PlusArgReader extends BlackBox with HasBlackBoxInline {
-  val io = IO(new Bundle {
-    val out = Output(UInt(32.W))
+  val io: Bundle = IO(new Bundle {
+    val out: UInt = Output(UInt(32.W))
   })
   setInline(
     "PlusArgReader.v",
@@ -58,21 +59,23 @@ class PlusArgReader extends BlackBox with HasBlackBoxInline {
 }
 
 class PlusArgReaderWrapper(expected: Int) extends Module {
-  val reader = Module(new PlusArgReader)
+  val reader: PlusArgReader = Module(new PlusArgReader)
   val msg = s"Expected $expected, got %x.\n" // this works around the fact that s".." is forbidden in the assert
   assert(reader.io.out === expected.U, msg, reader.io.out)
 }
 
 class IcarusBlackBoxTests extends AnyFlatSpec with ChiselScalatestTester {
-  behavior.of("Icarus Backend")
+  behavior.of {
+    "Icarus Backend"
+  }
 
-  val annos = Seq(IcarusBackendAnnotation)
+  val annos: Seq[IcarusBackendAnnotation.type] = Seq(IcarusBackendAnnotation)
 
   it should "support IcarusVerilog black boxes" taggedAs RequiresIcarus in {
     val rand = new Random()
     val mask = (BigInt(1) << 8) - 1
     test(new BlackBoxAdderWrapper).withAnnotations(annos) { dut =>
-      (0 until 1000).foreach { ii =>
+      (0 until 1000).foreach { _ =>
         val a = BigInt(8, rand)
         val b = BigInt(8, rand)
         val q = (a + b) & mask
@@ -86,12 +89,12 @@ class IcarusBlackBoxTests extends AnyFlatSpec with ChiselScalatestTester {
   it should "support reading IcarusVerilog plusargs" taggedAs RequiresIcarus in {
     for (plusarg <- List(0, 123, 456)) {
       val allAnnos = annos :+ PlusArgsAnnotation(s"+ARGUMENT=$plusarg" :: Nil)
-      test(new PlusArgReaderWrapper(plusarg)).withAnnotations(allAnnos) { dut =>
+      test(new PlusArgReaderWrapper(plusarg)).withAnnotations(firrtl2.AnnotationSeq(Seq(allAnnos)) { dut =>
         dut.reset.poke(true.B)
         dut.clock.step()
         dut.reset.poke(false.B)
         dut.clock.step()
-      }
+      })
     }
   }
 }

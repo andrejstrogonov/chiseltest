@@ -13,8 +13,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 
 // Inspired by plusarg_reader in rocket-chip
 class PlusArgReader extends BlackBox {
-  val io = IO(new Bundle {
-    val out = Output(UInt(32.W))
+  val io: Bundle = IO(new Bundle {
   })
 }
 
@@ -44,7 +43,7 @@ class PlusArgReaderTreadleImpl extends ScalaBlackBoxFactory with ScalaBlackBox {
 }
 
 class PlusArgReaderWrapper(expected: Int) extends Module {
-  val reader = Module(new PlusArgReader)
+  val reader: PlusArgReader = Module(new PlusArgReader)
   val msg = s"Expected $expected, got %x.\n" // this works around the fact that s".." is forbidden in the assert
   assert(reader.io.out === expected.U, msg, reader.io.out)
 }
