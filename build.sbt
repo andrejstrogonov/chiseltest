@@ -2,12 +2,12 @@
 
 lazy val commonSettings = Seq(
   organization := "edu.berkeley.cs",
-  scalaVersion := "2.13.12",
+  scalaVersion := "3.3.4",
   crossScalaVersions := Seq("2.13.12")
 )
 
-val chiselVersion = "6.0.0"
-val firrtlVersion = "6.0-SNAPSHOT"
+val chiselVersion = "6.5.0"
+val firrtlVersion = "6.0.0"
 
 lazy val chiseltestSettings = Seq(
   name := "chiseltest",
@@ -28,8 +28,8 @@ lazy val chiseltestSettings = Seq(
   libraryDependencies ++= Seq(
     "org.chipsalliance" %% "chisel" % chiselVersion,
     "edu.berkeley.cs" %% "firrtl2" % firrtlVersion,
-    "org.scalatest" %% "scalatest" % "3.2.17",
-    "net.java.dev.jna" % "jna" % "5.14.0",
+    "org.scalatest" %% "scalatest" % "3.2.19",
+    "net.java.dev.jna" % "jna" % "5.15.0",
     compilerPlugin(("org.chipsalliance" % "chisel-plugin" % chiselVersion).cross(CrossVersion.full))
   ),
   resolvers ++= Resolver.sonatypeOssRepos("snapshots"),
