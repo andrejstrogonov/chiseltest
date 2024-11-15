@@ -3,7 +3,6 @@
 package chiseltest.backends.treadle
 
 import chisel3._
-import chisel3.util._
 import chiseltest._
 import chiseltest.simulator.PlusArgsAnnotation
 import treadle2.{BlackBoxFactoriesAnnotation, ScalaBlackBox, ScalaBlackBoxFactory}
@@ -43,9 +42,8 @@ class PlusArgReaderTreadleImpl extends ScalaBlackBoxFactory with ScalaBlackBox {
 }
 
 class PlusArgReaderWrapper(expected: Int) extends Module {
-  val reader: PlusArgReader = Module(new PlusArgReader)
-  val msg = s"Expected $expected, got %x.\n" // this works around the fact that s".." is forbidden in the assert
-  assert(reader.io.out === expected.U, msg, reader.io.out)
+  val reader: PlusArgReader = Module(new PlusArgReader)// this works around the fact that s".." is forbidden in the assert
+  assert(reader.io.out === expected.U, reader.io.out)
 }
 
 class TreadleBlackBoxTest extends AnyFlatSpec with ChiselScalatestTester {

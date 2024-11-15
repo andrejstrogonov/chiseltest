@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 lazy val commonSettings = Seq(
-  organization := "edu.berkeley.cs",
+  organization := "vsu&vstu",
   scalaVersion := "3.3.4",
   crossScalaVersions := Seq("2.13.12")
 )
@@ -12,7 +12,7 @@ val firrtlVersion = "6.0.0"
 lazy val chiseltestSettings = Seq(
   name := "chiseltest",
   // we keep in sync with chisel version names
-  version := "6.0-SNAPSHOT",
+  version := "6.1-SNAPSHOT",
   scalacOptions := Seq(
     "-deprecation",
     "-feature",
@@ -28,7 +28,8 @@ lazy val chiseltestSettings = Seq(
   libraryDependencies ++= Seq(
     "org.chipsalliance" %% "chisel" % chiselVersion,
     "edu.berkeley.cs" %% "firrtl2" % firrtlVersion,
-    "org.scalatest" %% "scalatest" % "3.2.19",
+    "org.scalactic" %% "scalactic" % "3.2.19",
+    "org.scalatest" %% "scalatest" % "3.2.19" % "test",
     "net.java.dev.jna" % "jna" % "5.15.0",
     compilerPlugin(("org.chipsalliance" % "chisel-plugin" % chiselVersion).cross(CrossVersion.full))
   ),

@@ -5,8 +5,8 @@ package chiseltest.backends.icarus
 import chisel3._
 import chisel3.util._
 import chiseltest._
+import chiseltest.backends.treadle.PlusArgReaderWrapper
 import chiseltest.simulator.{PlusArgsAnnotation, RequiresIcarus}
-import org.scalatest.Assertions.===
 import org.scalatest.flatspec.AnyFlatSpec
 
 import scala.util.Random
@@ -36,33 +36,6 @@ class BlackBoxAdderWrapper extends Module {
   m.io <> io
 }
 
-// Inspired by plusarg_reader in rocket-chip
-class PlusArgReader extends BlackBox with HasBlackBoxInline {
-  val io: Bundle = IO(new Bundle {
-    val out: UInt = Output(UInt(32.W))
-  })
-  setInline(
-    "PlusArgReader.v",
-    """module PlusArgReader(
-      |  output [31:0] out
-      |);
-      |  reg [32:0] argument;
-      |  assign out = argument;
-      |  initial begin
-      |    if (!$value$plusargs("ARGUMENT=%d", argument)) begin
-      |      argument = 32'hdeadbeef;
-      |    end
-      |  end
-      |endmodule
-      |""".stripMargin
-  )
-}
-
-class PlusArgReaderWrapper(expected: Int) extends Module {
-  val reader: PlusArgReader = Module(new PlusArgReader)
-  val msg = s"Expected $expected, got %x.\n" // this works around the fact that s".." is forbidden in the assert
-  assert(reader.io.out === expected.U, msg, reader.io.out)
-}
 
 class IcarusBlackBoxTests extends AnyFlatSpec with ChiselScalatestTester {
   behavior.of {
@@ -83,18 +56,6 @@ class IcarusBlackBoxTests extends AnyFlatSpec with ChiselScalatestTester {
         dut.io.b.poke(b.U)
         dut.io.q.expect(q.U)
       }
-    }
-  }
-
-  it should "support reading IcarusVerilog plusargs" taggedAs RequiresIcarus in {
-    for (plusarg <- List(0, 123, 456)) {
-      val allAnnos = annos :+ PlusArgsAnnotation(s"+ARGUMENT=$plusarg" :: Nil)
-      test(new PlusArgReaderWrapper(plusarg)).withAnnotations(firrtl2.AnnotationSeq(Seq(allAnnos)) { dut =>
-        dut.reset.poke(true.B)
-        dut.clock.step()
-        dut.reset.poke(false.B)
-        dut.clock.step()
-      })
     }
   }
 }
