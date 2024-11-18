@@ -4,10 +4,12 @@ package chiseltest.backends.icarus
 
 import chisel3._
 import chisel3.util._
+import chiseltest.RawTester.test
 import chiseltest._
 import chiseltest.backends.treadle.PlusArgReaderWrapper
 import chiseltest.simulator.{PlusArgsAnnotation, RequiresIcarus}
 import org.scalatest.flatspec.AnyFlatSpec
+
 
 import scala.util.Random
 
@@ -37,7 +39,7 @@ class BlackBoxAdderWrapper extends Module {
 }
 
 
-class IcarusBlackBoxTests extends AnyFlatSpec with ChiselScalatestTester {
+class IcarusBlackBoxTests extends AnyFlatSpec {
   behavior.of {
     "Icarus Backend"
   }
