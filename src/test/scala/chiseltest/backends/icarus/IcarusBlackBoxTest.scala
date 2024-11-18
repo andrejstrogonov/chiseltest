@@ -9,7 +9,7 @@ import chiseltest._
 import chiseltest.backends.treadle.PlusArgReaderWrapper
 import chiseltest.simulator.{PlusArgsAnnotation, RequiresIcarus}
 import org.scalatest.flatspec.AnyFlatSpec
-
+import org.scalamock.scalatest.MockFactory
 
 import scala.util.Random
 
