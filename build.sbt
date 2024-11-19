@@ -32,6 +32,7 @@ lazy val chiseltestSettings = Seq(
     "org.scalactic" %% "scalactic" % "3.2.19",
     "org.scalatest" %% "scalatest" % "3.2.19" % "test",
     "org.scalamock" %% "scalamock" % "6.0.0" % "test",
+    "org.scalatestplus" %% "mockito-5-10" % "3.2.18.0" % "test",
     "net.java.dev.jna" % "jna" % "5.15.0",
     compilerPlugin(("org.chipsalliance" % "chisel-plugin" % chiselVersion).cross(CrossVersion.full))
   ),
