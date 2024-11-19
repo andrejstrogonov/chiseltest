@@ -3,6 +3,7 @@
 package chiseltest.backends.treadle
 
 import chisel3._
+import chisel3.util._
 import chiseltest._
 import chiseltest.simulator.PlusArgsAnnotation
 import treadle2.{BlackBoxFactoriesAnnotation, ScalaBlackBox, ScalaBlackBoxFactory}
@@ -12,7 +13,8 @@ import org.scalatest.flatspec.AnyFlatSpec
 
 // Inspired by plusarg_reader in rocket-chip
 class PlusArgReader extends BlackBox {
-  val io: Bundle = IO(new Bundle {
+  val io = IO(new Bundle {
+    val out = Output(UInt(32.W))
   })
 }
 
@@ -42,11 +44,12 @@ class PlusArgReaderTreadleImpl extends ScalaBlackBoxFactory with ScalaBlackBox {
 }
 
 class PlusArgReaderWrapper(expected: Int) extends Module {
-  val reader: PlusArgReader = Module(new PlusArgReader)// this works around the fact that s".." is forbidden in the assert
-  assert(reader.io.out === expected.U, reader.io.out)
+  val reader = Module(new PlusArgReader)
+  val msg = s"Expected $expected, got %x.\n" // this works around the fact that s".." is forbidden in the assert
+  assert(reader.io.out === expected.U, msg, reader.io.out)
 }
 
-class TreadleBlackBoxTest extends AnyFlatSpec with ChiselScalatestTester {
+abstract class TreadleBlackBoxTest extends AnyFlatSpec with ChiselScalatestTester {
   behavior.of("Treadle Backend")
 
   it should "support reading Verilog-style plusargs" in {
