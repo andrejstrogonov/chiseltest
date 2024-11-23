@@ -1,30 +1,34 @@
 package chiseltest.backends.icarus
 
-import chisel3.DontCare.:=
-import chisel3.simulator.PeekPokeAPI.testableData
-import chisel3.{Bundle, IO, Input, Output, UInt, fromIntToLiteral, fromIntToWidth}
+import chisel3.{Input, Output, UInt, fromIntToLiteral, fromIntToWidth}
+import org.mockito.ArgumentCaptor
+import org.mockito.Mockito.{times, verify}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.funsuite.AnyFunSuite
-import org.scalatest.matchers.must.Matchers.be
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.mockito.MockitoSugar.mock
 
 import scala.util.Random
 
 trait IcarusBlackBoxTrait {
-        val a: UInt = Input(UInt(8.W))
-        val b: UInt = Input(UInt(8.W))
-        val q: UInt = Output(UInt(8.W))
+  def add(a: UInt, b: UInt, q: UInt): Unit =8.U
 }
 class TestBlackBox extends AnyFunSuite with MockFactory {
-  val blackBox = mock[IcarusBlackBoxTrait]
+  val aCapture = new ArgumentCaptor[UInt]
+  val bCapture = new ArgumentCaptor[UInt]
+  val qCapture = new ArgumentCaptor[UInt]
+  val blackBoxMock = mock[IcarusBlackBoxTrait]
 
-  test("support IcarusVerilog black boxes") {
-   blackBox.io.a := 8.U
-   blackBox.io.b := 8.U
-   blackBox.io.q := 16.U
-    blackBox.io.q should be(convertToAnyShouldWrapper(16.U))
+  test("black box should call the add method") {
+    verify(blackBoxMock, times(1)).add(aCapture.capture(), bCapture.capture(), qCapture.capture())
   }
-}
+
+  }
+
+
+
+
+
+
+
 
 
