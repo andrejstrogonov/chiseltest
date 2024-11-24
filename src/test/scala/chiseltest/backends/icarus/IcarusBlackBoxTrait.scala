@@ -1,16 +1,15 @@
 package chiseltest.backends.icarus
 
-import chisel3.{Input, Output, UInt, fromIntToLiteral, fromIntToWidth}
+import chisel3.{UInt, fromIntToLiteral}
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito.{times, verify}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.funsuite.AnyFunSuite
-import org.scalatestplus.mockito.MockitoSugar.mock
 
 import scala.util.Random
 
 trait IcarusBlackBoxTrait {
-  def add(a: UInt, b: UInt, q: UInt): Unit =8.U
+  def add(a: UInt, b: UInt, q: UInt): Unit
 }
 class TestBlackBox extends AnyFunSuite with MockFactory {
   val aCapture = new ArgumentCaptor[UInt]
@@ -21,8 +20,7 @@ class TestBlackBox extends AnyFunSuite with MockFactory {
   test("black box should call the add method") {
     verify(blackBoxMock, times(1)).add(aCapture.capture(), bCapture.capture(), qCapture.capture())
   }
-
-  }
+}
 
 
 
