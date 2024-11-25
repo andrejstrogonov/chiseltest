@@ -16,6 +16,11 @@ trait TreadleBlackBoxTestTrait {
 
 }
 class TreadleBlackBoxTest extends AnyFunSuite with MockFactory{
+  val treadleBlackBoxTestTraitCollaborator = mock[TreadleBlackBoxTestTrait]
+  class TreadleBlackBoxTestTraitUnderTest extends TreadleBlackBoxTestTrait{
+
+  }
+
   // Your test cases go here
   // For example:
   // test("Simple circuit") {
